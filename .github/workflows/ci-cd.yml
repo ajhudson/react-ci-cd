@@ -23,13 +23,19 @@ jobs:
         exclude:
           - node-version: 18.x
             upload-artifact: false
-    uses: ./.github/workflows/build-javascript-app-with-npm.yml
+    uses: ./.github/workflows/build-and-test-javascript-app.yml
     with:
       node-version: ${{ matrix. node-version }}
       upload-artifact: ${{ matrix.upload-artifact }}
 
-  deploy:
+  e2e-tests:
+    name: End-to-End Tests
     needs: build
+    uses: ./.github/workflows/run-e2e-tests.yml
+
+  deploy:
+    name: Deploy to Azure
+    needs: e2e-tests
     uses: ./.github/workflows/deploy-javascript-app.yml
     secrets:
       deploy-token: ${{ secrets.AZ_DEPLOY_TOKEN }}

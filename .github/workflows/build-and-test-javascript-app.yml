@@ -17,6 +17,11 @@ on:
         type: string
         description: Location of the build output
         default: "./build"
+      artifact-name:
+        required: false
+        type: string
+        description: The name of the artifact
+        default: javascript-app-artifact
 
 jobs:
   build-app-and-test:
@@ -46,6 +51,6 @@ jobs:
         uses: actions/upload-artifact@v4.3.1
         if: ${{ inputs.upload-artifact }}
         with:
-          name: javascript-app-artifact
+          name: ${{ inputs.artifact-name }}
           path: ${{ inputs.artifact-path }}
           if-no-files-found: error
