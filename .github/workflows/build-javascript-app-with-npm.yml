@@ -1,0 +1,42 @@
+name: Build and Test a Javascript App
+
+on:
+  workflow_call:
+    inputs:
+      node-version:
+        required: true
+        type: string
+        description: The version of Node to use (e.g. '18.x')
+      upload-artifact:
+        required: true
+        type: boolean
+        description: Whether an artefact should be uploaded or not
+        default: false
+
+jobs:
+  build-app-and-test:
+    runs-on: ubuntu-latest
+    name: Build and Test
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set-Up Node Environment
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: npm
+
+      - name: Build
+        run: |
+          npm i
+          npm run build
+
+      - name:
+        uses: actions/upload-artifact@v4.3.1
+        if: ${{ inputs.upload-artifact == true }}
+        with:
+          name: javascript-app-artifact
+          path: "./build"
+          if-no-files-found: error
