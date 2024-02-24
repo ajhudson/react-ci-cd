@@ -28,14 +28,18 @@ jobs:
           node-version: ${{ inputs.node-version }}
           cache: npm
 
-      - name: Build
+      - name: Build App
         run: |
           npm i
           npm run build
 
-      - name:
+      - name: Run Tests
+        run: |
+          npm run test
+
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4.3.1
-        if: ${{ inputs.upload-artifact == true }}
+        if: ${{ inputs.upload-artifact }}
         with:
           name: javascript-app-artifact
           path: "./build"

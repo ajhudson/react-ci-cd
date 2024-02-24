@@ -16,6 +16,7 @@ jobs:
     uses: ./.github/workflows/build-javascript-app-with-npm.yml
     with:
       node-version: 18.x
+      upload-artifact: true
 # jobs:
 #   build:
 #     name: Build the React App
