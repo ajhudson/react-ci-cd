@@ -16,7 +16,7 @@ on:
 jobs:
   build-app-and-test:
     runs-on: ubuntu-latest
-    name: Build and Test
+    name: Build and Test for Node version ${{ inputs.node-version }}
 
     steps:
       - name: Checkout Code
@@ -37,7 +37,7 @@ jobs:
         run: |
           npm run test
 
-      - name: Upload Artifact
+      - name: Upload Artifact for Node version ${{ inputs.node-version }}
         uses: actions/upload-artifact@v4.3.1
         if: ${{ inputs.upload-artifact }}
         with:
