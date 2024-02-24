@@ -8,7 +8,7 @@ on:
         type: string
         description: The version of Node to use (e.g. '18.x')
       upload-artifact:
-        required: true
+        required: false
         type: boolean
         description: Whether an artefact should be uploaded or not
         default: false
