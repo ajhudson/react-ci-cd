@@ -1,0 +1,102 @@
+name: Logs into Azure using a Service Principal and runs Terraform 'plan' and optionally 'apply'
+
+on:
+  workflow_call:
+    inputs:
+      short-env-code:
+        required: true
+        type: string
+        description: The 3 letter short code for the environment (e.g. smk, uat or prd)
+      subscription-id:
+        required: true
+        type: string
+        description: The GUID representing an Azure subscription ID
+      tenant-id:
+        required: true
+        type: string
+        description: The GUID representing an Azure tenant ID
+      client-id:
+        required: true
+        type: string
+        description: The GUID representing an Azure client ID of a service principal
+      run-apply:
+        required: false
+        type: boolean
+        default: false
+        description: Will run terraform apply if set to true
+    secrets:
+      client-secret:
+        required: true
+        description: The string representing an Azure client secret of a service principal
+      ai-instrumentation-key:
+        required: true
+        description: The string representing the application insights instrumentation key
+
+permissions:
+  contents: read
+
+jobs:
+  terraform_plan_and_apply:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.short-env-code }}
+    name: Terraform Plan and Apply
+    env:
+      ARM_TENANT_ID: ${{ inputs.tenant-id }}
+      ARM_SUBSCRIPTION_ID: ${{ inputs.subscription-id }}
+      ARM_CLIENT_ID: ${{ inputs.client-id }}
+      ARM_CLIENT_SECRET: ${{ secrets.client-secret }}
+      TF_PLAN_FILE_NAME: tfplan
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # - name: Init Azure Credentials
+      #   uses: Davies-Group-Engineering/uki-reusablewf-infra/.github/actions/init-azure-credentials
+      #   with:
+      #     client-id: ${{ inputs.client-id }}
+      #     client-secret: ${{ secrets.client-secret }}
+      #     tenant-id: ${{ inputs.tenant-id }}
+      #     subscription-id: ${{ inputs.subscription-id }}
+
+      - name: Create Azure Credentials Object
+        shell: pwsh
+        run: |
+          $AzureCredsObj = @{
+          "subscriptionId" = "${{ inputs.subscription-id }}"
+          "tenantId" = "${{ inputs.tenant-id }}"
+          "clientId" = "${{ inputs.client-id }}"
+          "clientSecret" = "${{ secrets.client-secret }}"
+          }
+          $AzureCredsJson = $AzureCredsObj | ConvertTo-Json
+          "AZURE_CREDENTIALS<<EOF" >> $env:GITHUB_ENV
+          $AzureCredsJson >> $env:GITHUB_ENV
+          "EOF" >> $env:GITHUB_ENV
+
+      - name: Azure Login
+        uses: Azure/login@v1.6.1
+        env:
+          CREDENTIALS: ${{ env.AZURE_CREDENTIALS }}
+        with:
+          creds: ${{ env.CREDENTIALS }}
+
+      - name: Terraform Init
+        run: |
+          cd terraform/${{ inputs.short-env-code }}
+          terraform init --backend-config=../backend.${{ inputs.short-env-code }}.conf
+
+      - name: Terraform Plan
+        id: terraform-plan
+        shell: pwsh
+        run: |
+          cd terraform/${{ inputs.short-env-code }}
+          terraform plan -var="appinsights_key=${{ secrets.ai-instrumentation-key }}" -out="${{ env.TF_PLAN_FILE_NAME }}" | Tee-Object -Variable TerraformOutput
+          $ParsedOutput = $TerraformOutput -join "`n"
+          $NeedsApply = ($ParsedOutput -match 'no changes needed') -eq $false
+          "terraform-needs-apply=$NeedsApply" >> $env:GITHUB_OUTPUT
+
+      - name: Terraform Apply
+        if: ${{ inputs.runapply && steps.terraform-plan.output.terraform-needs-apply }}
+        run: |
+          cd terraform/${{ inputs.short-env-code }}
+          terraform apply ${{ env.TF_PLAN_FILE }}
