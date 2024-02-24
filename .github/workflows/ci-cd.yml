@@ -21,6 +21,8 @@ jobs:
   deploy:
     needs: build
     uses: ./.github/workflows/deploy-javascript-app.yml
+    secrets:
+      deploy-token: ${{ secrets.AZ_DEPLOY_TOKEN }}
 # jobs:
 #   build:
 #     name: Build the React App

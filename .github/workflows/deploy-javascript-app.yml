@@ -2,6 +2,10 @@ name: Deploy a Javascript App to Azure
 
 on:
   workflow_call:
+    secrets:
+      deploy-token:
+        required: true
+        description: The token required to deploy the app to Azure
 
 jobs:
   deploy:
@@ -20,4 +24,4 @@ jobs:
           action: "upload"
           app_location: "/"
           output_location: "/build"
-          azure_static_web_apps_api_token: ${{ secrets.AZ_DEPLOY_TOKEN }}
+          azure_static_web_apps_api_token: ${{ secrets.deploy-token }}
