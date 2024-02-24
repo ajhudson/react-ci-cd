@@ -2,6 +2,12 @@ name: Run End-to-End Tests
 
 on:
   workflow_call:
+    inputs:
+      artifact-name:
+        required: false
+        type: string
+        description: The name of the artifact
+        default: javascript-app-artifact
 
 jobs:
   e2e-tests:
@@ -14,8 +20,7 @@ jobs:
       - name: Get Artifact
         uses: actions/download-artifact@v4.1.2
         with:
-          name: javascript-app-artifact
-          path: build
+          name: ${{ inputs.artifact-name }}
 
       - name: Run Cypress
         uses: cypress-io/github-action@v6

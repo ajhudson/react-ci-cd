@@ -13,6 +13,11 @@ on:
         type: string
         description: The location of the application once the artifact is uploaded
         default: "/"
+      artifact-name:
+        required: false
+        type: string
+        description: The name of the artifact
+        default: javascript-app-artifact
     secrets:
       deploy-token:
         required: true
@@ -27,7 +32,7 @@ jobs:
       - name: Download the Artifact
         uses: actions/download-artifact@v4.1.2
         with:
-          name: javascript-app-artifact
+          name: ${{ inputs.artifact-name }}
 
       - name: Deploy to Static Web App
         uses: azure/static-web-apps-deploy@v1
