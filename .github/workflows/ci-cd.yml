@@ -19,6 +19,7 @@ jobs:
       upload-artifact: true
 
   deploy:
+    needs: build
     uses: ./.github/workflows/deploy-javascript-app.yml
 # jobs:
 #   build:
