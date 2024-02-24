@@ -42,5 +42,5 @@ jobs:
         if: ${{ inputs.upload-artifact }}
         with:
           name: javascript-app-artifact
-          path: "/build"
+          path: "./build"
           if-no-files-found: error
