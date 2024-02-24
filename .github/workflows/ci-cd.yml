@@ -18,10 +18,10 @@ jobs:
         node-version: [18.x, 20.x]
         upload-artifact: [false]
         include:
-          - node-version: 20.x
+          - node-version: 18.x
             upload-artifact: true
         exclude:
-          - node-version: 20.x
+          - node-version: 18.x
             upload-artifact: false
     uses: ./.github/workflows/build-javascript-app-with-npm.yml
     with:
