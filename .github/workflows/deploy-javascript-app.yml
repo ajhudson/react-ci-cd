@@ -1,0 +1,23 @@
+name: Deploy a Javascript App to Azure
+
+on:
+  workflow_call:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Azure
+
+    steps:
+      - name: Download the Artifact
+        uses: actions/download-artifact@v4.1.2
+        with:
+          name: javascript-app-artifact
+
+      - name: Deploy to Static Web App
+        uses: azure/static-web-apps-deploy@v1
+        with:
+          action: "upload"
+          app_location: "/"
+          output_location: "/build"
+          azure_static_web_apps_api_token: ${{ secrets.AZ_DEPLOY_TOKEN }}
