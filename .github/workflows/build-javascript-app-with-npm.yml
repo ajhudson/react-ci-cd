@@ -12,6 +12,11 @@ on:
         type: boolean
         description: Whether an artefact should be uploaded or not
         default: false
+      artifact-path:
+        required: false
+        type: string
+        description: Location of the build output
+        default: "./build"
 
 jobs:
   build-app-and-test:
@@ -42,5 +47,5 @@ jobs:
         if: ${{ inputs.upload-artifact }}
         with:
           name: javascript-app-artifact
-          path: "./build"
+          path: ${{ inputs.artifact-path }}
           if-no-files-found: error

@@ -2,6 +2,17 @@ name: Deploy a Javascript App to Azure
 
 on:
   workflow_call:
+    inputs:
+      artifact-output-location:
+        required: false
+        type: string
+        description: The location of the build output
+        default: "/build"
+      app-location:
+        required: false
+        type: string
+        description: The location of the application once the artifact is uploaded
+        default: "/"
     secrets:
       deploy-token:
         required: true
@@ -22,6 +33,6 @@ jobs:
         uses: azure/static-web-apps-deploy@v1
         with:
           action: "upload"
-          app_location: "/"
-          output_location: "/build"
+          app_location: ${{ inputs.app-location }}
+          output_location: ${{ inputs.artifact-output-location }}
           azure_static_web_apps_api_token: ${{ secrets.deploy-token }}
