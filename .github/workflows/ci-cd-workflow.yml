@@ -11,6 +11,9 @@ on:
         required: true
         type: string
         description: The node version to build and run tests on (e.g. 18.x)
+      sentinel-value:
+        type: string
+        required: true
     secrets:
       deploy-token:
         required: true
@@ -29,9 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.env-short-code }}
     steps:
-      - name: Show Token for ${{ inputs.env-short-code }} Environment
+      - name: Show Sentinel Value for ${{ inputs.env-short-code }} Environment
         run: |
-          echo "Token for ${{ inputs.env-short-code }} Environment: ${{ secrets.deploy-token }}"
+          echo "Sentinel value: ${{ inputs.sentinel-value }}"
 
 #   e2e-tests:
 #     name: End-to-End Tests in the ${{ inputs.env-short-code }} Environment
