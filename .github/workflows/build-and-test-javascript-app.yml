@@ -23,62 +23,47 @@ on:
         description: The name of the artifact
         default: javascript-app-artifact
     outputs:
-      # artifact-uploaded:
-      #   value: ${{ jobs.build-app-and-test.set-artifact-uploaded-status.is-uploaded }}
-      #   description: Flag to determine if artifact was uploaded or not
-      myvar:
-        value: ${{ jobs.set-var-job.outputs.myvar }}
-        description: Value of my var
+      artifact-uploaded:
+        value: ${{ jobs.build-app-and-test.outputs.artifact-uploaded }}
+        description: Flag to determine if artifact was uploaded or not
 
 jobs:
-  set-var-job:
+  build-app-and-test:
     runs-on: ubuntu-latest
-    name: Set a variable
+    name: Build and Test for Node version ${{ inputs.node-version }}
     outputs:
-      myvar: ${{ steps.set-output-var.outputs.myvar }}
+      artifact-uploaded: ${{ steps.set-artifact-uploaded.outputs.artifact-uploaded }}
     steps:
-      - name: Set an output var
-        id: set-output-var
-        run: echo "myvar=123" >> $GITHUB_OUTPUT
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Show output var
+      - name: Set-Up Node Environment
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: npm
+
+      - name: Build App
         run: |
-          echo "Result: ${{ steps.set-output-var.outputs.myvar }}"
+          npm i
+          npm run build
 
-# jobs:
-#   build-app-and-test:
-#     runs-on: ubuntu-latest
-#     name: Build and Test for Node version ${{ inputs.node-version   }}
+      - name: Run Tests
+        run: |
+          npm run test
 
-#     steps:
-#       - name: Checkout Code
-#         uses: actions/checkout@v4
+      - name: Upload Artifact for Node version ${{ inputs.node-version }}
+        uses: actions/upload-artifact@v4.3.1
+        if: ${{ inputs.upload-artifact }}
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ inputs.artifact-path }}
+          if-no-files-found: error
 
-#       - name: Set-Up Node Environment
-#         uses: actions/setup-node@v4.0.2
-#         with:
-#           node-version: ${{ inputs.node-version }}
-#           cache: npm
-
-#       - name: Build App
-#         run: |
-#           npm i
-#           npm run build
-
-#       - name: Run Tests
-#         run: |
-#           npm run test
-
-#       - name: Upload Artifact for Node version ${{ inputs.node-version }}
-#         uses: actions/upload-artifact@v4.3.1
-#         if: ${{ inputs.upload-artifact }}
-#         with:
-#           name: ${{ inputs.artifact-name }}
-#           path: ${{ inputs.artifact-path }}
-#           if-no-files-found: error
-
-#       - name: Set Artifact Flag
-#         id: set-artifact-uploaded-status
-#         if: ${{ inputs.upload-artifact && success() }}
-#         run: |
-#           echo "is-uploaded=true" >> $GITHUB_OUTPUT
+      - name: Set Artifact Uploaded Flag
+        if: ${{ inputs.node-version == '18.x' && success() }}
+        id: set-artifact-uploaded
+        shell: pwsh
+        run: |
+          $NodeVerInt = "${{ inputs.node-version }}" -replace '[^0-9]',''
+          "artifact-uploaded=true" >> $env:GITHUB_OUTPUT
