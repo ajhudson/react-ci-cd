@@ -3,6 +3,10 @@ name: Build and Test a Javascript App
 on:
   workflow_call:
     inputs:
+      env-short-code:
+        required: true
+        type: string
+        description: The environment code (e.g. smk, uat or prod)
       node-version:
         required: true
         type: string
@@ -29,6 +33,7 @@ on:
 
 jobs:
   build-app-and-test:
+    environment: ${{ inputs.env-short-code }}
     runs-on: ubuntu-latest
     name: Build and Test for Node version ${{ inputs.node-version }}
     outputs:
