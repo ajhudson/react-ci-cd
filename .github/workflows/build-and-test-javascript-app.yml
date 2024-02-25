@@ -39,6 +39,11 @@ jobs:
       - name: Set an output var
         id: set-output-var
         run: echo "my-var=123" >> $GITHUB_OUTPUT
+
+      - name: Show output var
+        run: |
+          echo "Result: ${{ steps.set-output-var.outputs.my-var }}"
+
 # jobs:
 #   build-app-and-test:
 #     runs-on: ubuntu-latest
