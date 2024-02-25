@@ -3,6 +3,10 @@ name: Deploy a Javascript App to Azure
 on:
   workflow_call:
     inputs:
+      env-short-code:
+        required: true
+        type: string
+        description: The environment code (e.g. smk, uat or prod)
       artifact-output-location:
         required: false
         type: string
@@ -27,7 +31,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     name: Deploy to Azure
-
+    environment: ${{ inputs.env-short-code }}
     steps:
       - name: Download the Artifact
         uses: actions/download-artifact@v4.1.2

@@ -3,6 +3,10 @@ name: Run End-to-End Tests
 on:
   workflow_call:
     inputs:
+      env-short-code:
+        required: true
+        type: string
+        description: The environment code (e.g. smk, uat or prod)
       artifact-name:
         required: false
         type: string
@@ -13,6 +17,7 @@ jobs:
   e2e-tests:
     name: End-to-End Tests with Cypress
     runs-on: ubuntu-latest
+    environment: ${{ inputs.env-short-code }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

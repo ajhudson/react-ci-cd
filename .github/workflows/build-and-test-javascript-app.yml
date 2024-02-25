@@ -3,6 +3,10 @@ name: Build and Test a Javascript App
 on:
   workflow_call:
     inputs:
+      env-short-code:
+        required: true
+        type: string
+        description: The environment code (e.g. smk, uat or prod)
       node-version:
         required: true
         type: string
@@ -22,12 +26,18 @@ on:
         type: string
         description: The name of the artifact
         default: javascript-app-artifact
+    outputs:
+      artifact-uploaded:
+        value: ${{ jobs.build-app-and-test.outputs.artifact-uploaded }}
+        description: Flag to determine if artifact was uploaded or not
 
 jobs:
   build-app-and-test:
+    environment: ${{ inputs.env-short-code }}
     runs-on: ubuntu-latest
-    name: Build and Test for Node version ${{ inputs.node-version   }}
-
+    name: Build and Test for Node version ${{ inputs.node-version }}
+    outputs:
+      artifact-uploaded: ${{ steps.set-artifact-uploaded.outputs.artifact-uploaded }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -54,3 +64,10 @@ jobs:
           name: ${{ inputs.artifact-name }}
           path: ${{ inputs.artifact-path }}
           if-no-files-found: error
+
+      - name: Set Artifact Uploaded Flag
+        if: ${{ inputs.upload-artifact }}
+        id: set-artifact-uploaded
+        shell: pwsh
+        run: |
+          "artifact-uploaded=true" >> $env:GITHUB_OUTPUT
