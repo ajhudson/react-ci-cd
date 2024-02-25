@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: Show Sentinel Value for ${{ inputs.env-short-code }} Environment
         run: |
-          echo "Sentinel value: ${{ env.SENTINEL }}"
+          echo "Sentinel value: $SENTINEL"
 
 #   e2e-tests:
 #     name: End-to-End Tests in the ${{ inputs.env-short-code }} Environment
