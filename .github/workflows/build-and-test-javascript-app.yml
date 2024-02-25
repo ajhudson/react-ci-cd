@@ -34,7 +34,8 @@ jobs:
   set-var:
     runs-on: ubuntu-latest
     name: Set a variable
-
+    outputs:
+      my-var: ${{ steps.set-output-var.outputs.my-var }}
     steps:
       - name: Set an output var
         id: set-output-var
