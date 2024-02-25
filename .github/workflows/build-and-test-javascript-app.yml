@@ -43,7 +43,7 @@ jobs:
 
       - name: Show output var
         run: |
-          echo "Result: ${{ steps.set-output-var.outputs.my-var }}"
+          echo "Result: ${{ steps.set-output-var.outputs.myvar }}"
 
 # jobs:
 #   build-app-and-test:
