@@ -61,9 +61,7 @@ jobs:
           if-no-files-found: error
 
       - name: Set Artifact Uploaded Flag
-        if: ${{ inputs.node-version == '18.x' && success() }}
         id: set-artifact-uploaded
         shell: pwsh
         run: |
-          $NodeVerInt = "${{ inputs.node-version }}" -replace '[^0-9]',''
           "artifact-uploaded=true" >> $env:GITHUB_OUTPUT
