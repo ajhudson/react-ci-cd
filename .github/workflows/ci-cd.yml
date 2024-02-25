@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Display the var
-        run: echo my-var ${{ needs.build.outputs.myvar }}
+        run: echo myvar ${{ needs.build.outputs.myvar }}
 # jobs:
 #   build:
 #     strategy:
