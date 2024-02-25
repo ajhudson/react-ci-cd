@@ -12,17 +12,17 @@ on:
       - "!terraform/**"
 
 jobs:
-  build:
+  set-var-job:
     uses: ./.github/workflows/build-and-test-javascript-app.yml
     with:
       node-version: 18.x
 
   show-the-var:
-    needs: build
+    needs: set-var-job
     runs-on: ubuntu-latest
     steps:
       - name: Display the var
-        run: echo myvar ${{ needs.build.outputs.myvar }}
+        run: echo myvar ${{ needs.set-var-job.outputs.myvar }}
 # jobs:
 #   build:
 #     strategy:
