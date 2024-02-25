@@ -1,0 +1,43 @@
+name: CI CD Workflow
+
+on:
+  workflow_call:
+    inputs:
+      env-short-code:
+        required: true
+        type: string
+        description: The environment code (e.g. smk, uat or prod)
+      node-version:
+        required: true
+        type: string
+        description: The node version to build and run tests on (e.g. 18.x)
+    secrets:
+      deploy-token:
+        required: true
+        description: The token required to deploy the app to Azure
+
+jobs:
+  build:
+    name: Build and Test for ${{ inputs.env-short-code }} Environment
+    uses: ./.github/workflows/build-and-test-javascript-app.yml
+    with:
+      env-short-code: ${{ inputs.env-short-code }}
+      node-version: ${{ inputs.node-version }}
+      upload-artifact: true
+
+  e2e-tests:
+    name: End-to-End Tests
+    if: ${{ needs.build.outputs.artifact-uploaded }}
+    needs: build
+    uses: ./.github/workflows/run-e2e-tests.yml
+    with:
+      env-short-code: ${{ inputs.env-short-code }}
+
+  deploy:
+    name: Deploy to Azure
+    needs: e2e-tests
+    uses: ./.github/workflows/deploy-javascript-app.yml
+    with:
+      env-short-code: ${{ inputs.env-short-code }}
+    secrets:
+      deploy-token: ${{ secrets.deploy-token }}
