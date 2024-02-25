@@ -26,20 +26,20 @@ on:
       # artifact-uploaded:
       #   value: ${{ jobs.build-app-and-test.set-artifact-uploaded-status.is-uploaded }}
       #   description: Flag to determine if artifact was uploaded or not
-      my-var:
-        value: ${{ jobs.set-var.set-output-var.outputs.my-var }}
+      myvar:
+        value: ${{ jobs.set-var-job.set-output-var.outputs.myvar }}
         description: Value of my var
 
 jobs:
-  set-var:
+  set-var-job:
     runs-on: ubuntu-latest
     name: Set a variable
     outputs:
-      my-var: ${{ steps.set-output-var.outputs.my-var }}
+      my-var: ${{ steps.set-output-var.outputs.myvar }}
     steps:
       - name: Set an output var
         id: set-output-var
-        run: echo "my-var=123" >> $GITHUB_OUTPUT
+        run: echo "myvar=123" >> $GITHUB_OUTPUT
 
       - name: Show output var
         run: |
