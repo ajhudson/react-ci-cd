@@ -61,7 +61,7 @@ jobs:
         uses: actions/upload-artifact@v4.3.1
         if: ${{ inputs.upload-artifact }}
         with:
-          name: ${{ inputs.artifact-name }}
+          name: ${{ inputs.artifact-name }}-${{ inputs.env-short-code}}
           path: ${{ inputs.artifact-path }}
           if-no-files-found: error
 
