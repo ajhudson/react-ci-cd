@@ -13,29 +13,42 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x]
-        upload-artifact: [false]
-        include:
-          - node-version: 18.x
-            upload-artifact: true
-        exclude:
-          - node-version: 18.x
-            upload-artifact: false
     uses: ./.github/workflows/build-and-test-javascript-app.yml
     with:
-      node-version: ${{ matrix. node-version }}
-      upload-artifact: ${{ matrix.upload-artifact }}
+      node-version: 18.x
 
-  e2e-tests:
-    name: End-to-End Tests
+  show-the-var:
     needs: build
-    uses: ./.github/workflows/run-e2e-tests.yml
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display the var
+        run: echo my-var ${{ needs.build.outputs.my-var }}
+# jobs:
+#   build:
+#     strategy:
+#       matrix:
+#         node-version: [18.x, 20.x]
+#         upload-artifact: [false]
+#         include:
+#           - node-version: 18.x
+#             upload-artifact: true
+#         exclude:
+#           - node-version: 18.x
+#             upload-artifact: false
+#     uses: ./.github/workflows/build-and-test-javascript-app.yml
+#     with:
+#       node-version: ${{ matrix. node-version }}
+#       upload-artifact: ${{ matrix.upload-artifact }}
 
-  deploy:
-    name: Deploy to Azure
-    needs: e2e-tests
-    uses: ./.github/workflows/deploy-javascript-app.yml
-    secrets:
-      deploy-token: ${{ secrets.AZ_DEPLOY_TOKEN }}
+#   e2e-tests:
+#     name: End-to-End Tests
+#     if: ${{ needs.build.outputs.artifact-uploaded }}
+#     needs: build
+#     uses: ./.github/workflows/run-e2e-tests.yml
+
+#   deploy:
+#     name: Deploy to Azure
+#     needs: e2e-tests
+#     uses: ./.github/workflows/deploy-javascript-app.yml
+#     secrets:
+#       deploy-token: ${{ secrets.AZ_DEPLOY_TOKEN }}

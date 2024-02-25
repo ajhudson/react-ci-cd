@@ -22,35 +22,57 @@ on:
         type: string
         description: The name of the artifact
         default: javascript-app-artifact
+    outputs:
+      # artifact-uploaded:
+      #   value: ${{ jobs.build-app-and-test.set-artifact-uploaded-status.is-uploaded }}
+      #   description: Flag to determine if artifact was uploaded or not
+      my-var:
+        value: ${{ jobs.set-var.set-output-var.outputs.my-var }}
+        description: Value of my var
 
 jobs:
-  build-app-and-test:
+  set-var:
     runs-on: ubuntu-latest
-    name: Build and Test for Node version ${{ inputs.node-version   }}
+    name: Set a variable
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Set an output var
+        id: set-output-var
+        run: echo "my-var=123" >> $GITHUB_OUTPUT
+# jobs:
+#   build-app-and-test:
+#     runs-on: ubuntu-latest
+#     name: Build and Test for Node version ${{ inputs.node-version   }}
 
-      - name: Set-Up Node Environment
-        uses: actions/setup-node@v4.0.2
-        with:
-          node-version: ${{ inputs.node-version }}
-          cache: npm
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v4
 
-      - name: Build App
-        run: |
-          npm i
-          npm run build
+#       - name: Set-Up Node Environment
+#         uses: actions/setup-node@v4.0.2
+#         with:
+#           node-version: ${{ inputs.node-version }}
+#           cache: npm
 
-      - name: Run Tests
-        run: |
-          npm run test
+#       - name: Build App
+#         run: |
+#           npm i
+#           npm run build
 
-      - name: Upload Artifact for Node version ${{ inputs.node-version }}
-        uses: actions/upload-artifact@v4.3.1
-        if: ${{ inputs.upload-artifact }}
-        with:
-          name: ${{ inputs.artifact-name }}
-          path: ${{ inputs.artifact-path }}
-          if-no-files-found: error
+#       - name: Run Tests
+#         run: |
+#           npm run test
+
+#       - name: Upload Artifact for Node version ${{ inputs.node-version }}
+#         uses: actions/upload-artifact@v4.3.1
+#         if: ${{ inputs.upload-artifact }}
+#         with:
+#           name: ${{ inputs.artifact-name }}
+#           path: ${{ inputs.artifact-path }}
+#           if-no-files-found: error
+
+#       - name: Set Artifact Flag
+#         id: set-artifact-uploaded-status
+#         if: ${{ inputs.upload-artifact && success() }}
+#         run: |
+#           echo "is-uploaded=true" >> $GITHUB_OUTPUT
