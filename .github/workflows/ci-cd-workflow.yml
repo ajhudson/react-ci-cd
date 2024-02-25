@@ -11,22 +11,19 @@ on:
         required: true
         type: string
         description: The node version to build and run tests on (e.g. 18.x)
-      sentinel-value:
-        type: string
-        required: true
     secrets:
       deploy-token:
         required: true
         description: The token required to deploy the app to Azure
 
 jobs:
-  build:
-    name: Build and Test for ${{ inputs.env-short-code }} Environment
-    uses: ./.github/workflows/build-and-test-javascript-app.yml
-    with:
-      env-short-code: ${{ inputs.env-short-code }}
-      node-version: ${{ inputs.node-version }}
-      upload-artifact: true
+  # build:
+  #   name: Build and Test for ${{ inputs.env-short-code }} Environment
+  #   uses: ./.github/workflows/build-and-test-javascript-app.yml
+  #   with:
+  #     env-short-code: ${{ inputs.env-short-code }}
+  #     node-version: ${{ inputs.node-version }}
+  #     upload-artifact: true
 
   show-token:
     runs-on: ubuntu-latest
@@ -34,7 +31,7 @@ jobs:
     steps:
       - name: Show Sentinel Value for ${{ inputs.env-short-code }} Environment
         run: |
-          echo "Sentinel value: ${{ inputs.sentinel-value }}"
+          echo "Sentinel value: ${{ env.SENTINEL }}"
 
 #   e2e-tests:
 #     name: End-to-End Tests in the ${{ inputs.env-short-code }} Environment
