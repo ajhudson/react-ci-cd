@@ -22,3 +22,5 @@ jobs:
     with:
       env-short-code: ${{ matrix.env-short-code }}
       node-version: 18.x
+    secrets:
+      deploy-token: ${{ secrets.AZ_DEPLOY_TOKEN }}
