@@ -28,10 +28,12 @@ jobs:
   show-token:
     runs-on: ubuntu-latest
     environment: ${{ inputs.env-short-code }}
+    env:
+      sentinalval: ${{ vars.SENTINEL }}
     steps:
       - name: Show Sentinel Value for ${{ inputs.env-short-code }} Environment
         run: |
-          echo "Sentinel value: ${{ vars.SENTINEL }}"
+          echo "Sentinel value: ${{ env.sentinalval }}"
 
 #   e2e-tests:
 #     name: End-to-End Tests in the ${{ inputs.env-short-code }} Environment
